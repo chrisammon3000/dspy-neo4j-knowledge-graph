@@ -1,0 +1,3 @@
+python-dotenv
+dspy-ai
+neo4j
