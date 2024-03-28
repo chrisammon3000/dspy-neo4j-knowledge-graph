@@ -14,29 +14,40 @@ from src.neo4j import Neo4j
 # set up Neo4j using NEO4J_URI
 neo4j = Neo4j(uri=os.getenv("NEO4J_URI"), user=os.getenv("NEO4J_USER"), password=os.getenv("NEO4J_PASSWORD"))
 
-def fmt_schema(neo4j: Neo4j):
-    parsed = neo4j.schema(parsed=True)
-    return "\n".join([f"{element}:\n{parsed[idx]}\n" for idx, element in enumerate(["NODES", "RELATIONSHIPS"])])
-
 lm = dspy.OpenAI(
     model="gpt-4",
-    max_tokens=500,
+    max_tokens=1024,
 )
 dspy.configure(lm=lm)
 
 class CypherFromText(dspy.Signature):
-    """Create a Cypher MERGE statement to model all entities and relationships found in the text."""
+    """Instructions:
+    Create a Cypher MERGE statement to model all entities and relationships found in the text following these guidelines:
+    - Refer to the provided schema and use existing or similar nodes, properties or relationships before creating new ones.
+    - Use generic categories for node and relationship labels."""
 
-    text = dspy.InputField(desc="Text to model.")
+    text = dspy.InputField(desc="Text to model using nodes, properties and relationships.")
+    neo4j_schema = dspy.InputField(desc="Current graph schema in Neo4j as a list of NODES and RELATIONSHIPS.")
     statement = dspy.OutputField(desc="Cypher statement to merge nodes and relationships found in the text.")
 
 generate_cypher = dspy.ChainOfThought(CypherFromText)
 
 if __name__ == "__main__":
+    from pathlib import Path
+    import json
     # text = "The quick brown fox jumps over the lazy dog."
     # text = 'John Singer Sargent (/ˈsɑːrdʒənt/; January 12, 1856 – April 14, 1925)[1] was an American expatriate artist, considered the "leading portrait painter of his generation" for his evocations of Edwardian-era luxury.[2][3] He created roughly 900 oil paintings and more than 2,000 watercolors, as well as countless sketches and charcoal drawings. His oeuvre documents worldwide travel, from Venice to the Tyrol, Corfu, Spain, the Middle East, Montana, Maine, and Florida.'
     
-    text = input("Enter text: ")
-    cypher = generate_cypher(text=text)
-    neo4j.query(cypher.statement.replace('```', ''))
+    # text = input("Enter text: ")
+    examples_path = Path(__file__).parent / "examples" / "wikipedia-abstracts-v0_0_1.ndjson"
+    with open(examples_path, "r") as f:
+        # process line by line
+        for line in f:
+            data = json.loads(line)
+            text = data["text"]
+            print(text[:50])
+            cypher = generate_cypher(text=text, neo4j_schema=neo4j.fmt_schema())
+            neo4j.query(cypher.statement.replace('```', ''))
+    # cypher = generate_cypher(text=text, neo4j_schema=neo4j.fmt_schema())
+    # neo4j.query(cypher.statement.replace('```', ''))
     print()
