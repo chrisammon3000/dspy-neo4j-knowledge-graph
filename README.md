@@ -16,6 +16,9 @@ dspy-neo4j-knowledge-graph/
 ## Description
 Model entities and relationships and build a Knowledge Graph using DSPy, Neo4j, and OpenAI's GPT-4. When given a paragraph or block of text, the app uses the DSPy library and OpenAI's GPT-4 to extract entities and relationships and generate a Cypher statement which is run in Neo4j to create the Knowledge Graph.
 
+### Optimized Schema Context
+The current graph schema is passed to the model as a list of nodes, relationships and properties in the context of the prompt. This allows the model to use elements from the existing schema and make connections between existing entities and relationships.
+
 ## Quick Start
 1. Clone the repository.
 2. Create a [Python virtual environment](#python-virtual-environment) and install the required packages.
