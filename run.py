@@ -54,6 +54,8 @@ if __name__ == "__main__":
 
         except Exception as e:
             print(e)
+            print("Please input one paragraph at a time.")
             continue
+        
         except KeyboardInterrupt:
             break

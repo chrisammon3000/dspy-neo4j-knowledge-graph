@@ -1,6 +1,8 @@
 # dspy-neo4j-knowledge-graph
 LLM-driven automated knowledge graph construction from text using DSPy and Neo4j.
 
+![Knowledge Graph](img/kg.png)
+
 ## Project Structure
 ```sh
 dspy-neo4j-knowledge-graph/
@@ -12,7 +14,7 @@ dspy-neo4j-knowledge-graph/
 ```
 
 ## Description
-Model entities and relationships and build a Knowledge Graph using DSPy, Neo4j, and OpenAI's GPT-4.
+Model entities and relationships and build a Knowledge Graph using DSPy, Neo4j, and OpenAI's GPT-4. When given a paragraph or block of text, the app uses the DSPy library and OpenAI's GPT-4 to extract entities and relationships and generate a Cypher statement which is run in Neo4j to create the Knowledge Graph.
 
 ## Quick Start
 1. Clone the repository.
