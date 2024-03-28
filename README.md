@@ -1,28 +1,42 @@
-# natural-language-knowledge-graph
-Natural language interfaces for a Neo4j knowledge graph.
+# dspy-neo4j-knowledge-graph
+LLM-driven automated knowledge graph construction from text using DSPy and Neo4j.
+
+## Project Structure
+```sh
+dspy-neo4j-knowledge-graph/
+├── README.md
+├── examples
+├── requirements.txt
+├── run.py
+└── src
+```
 
 ## Description
+Model entities and relationships and build a Knowledge Graph using DSPy, Neo4j, and OpenAI's GPT-4.
 
-### Requirements
-- Extract entities and relationships from text
-- Create Cypher statements
-<!-- 
-#### Tentative Requirements
-- Model entities and relationships an arbitrary dataset (CSV or JSON) in a Knowledge Graph
-    - Parse & contextualize the source schema
-    - Parse & contextualize the KG schema
-    - Dynamically generate KG schema and write queries from the above context
-- Formulate queries from natural language descriptions against the KG
-    - Parse & contextualize the KG schema
-    - Generate read queries using the context -->
+## Quick Start
+1. Clone the repository.
+2. Create a [Python virtual environment](#python-virtual-environment) and install the required packages.
+3. Create a `.env` file and add the required [environment variables](#environment-variables).
+4. [Run Neo4j using Docker](#usage).
+5. Run `python3 run.py` and paste your text in the prompt.
+6. Navigate to `http://localhost:7474/browser/` to view the Knowledge Graph in Neo4j Browser.
 
-## Prerequisites
+## Installation
+
+### Prerequisites
+* Python 3.12
+* OpenAI API Key
+* Docker
+
+### Environment Variables
 Before you begin, make sure to create a `.env` file and add your OpenAI API key.
 ```sh
+NEO4J_URI=bolt://localhost:7687
 OPENAI_API_KEY=<your-api-key>
 ```
 
-## Installation
+### Python Virtual Environment
 Create a Python virtual environment and install the required packages.
 ```sh
 python3 -m venv .venv
@@ -32,57 +46,21 @@ pip install -r requirements.txt
 ```
 
 ## Usage
-<!-- Download the Northwind dataset.
-```sh
-bash download-northwind.sh
-```
-
-Generate embeddings for product names.
-```sh
-python3 src/generate_embeddings.py
-``` -->
-
 Run Neo4j using Docker.
 ```sh
 docker run \
-    --name nlkg \
+    --name dspy-kg \
     --publish=7474:7474 \
     --publish=7687:7687 \
     --env "NEO4J_AUTH=none" \
     neo4j:5.15
 ```
 
-<!-- Run Cypher to load Neo4j and create the vector indexes.
-```sh
-cat import.cypher | docker exec -i neo4j "/var/lib/neo4j/bin/cypher-shell"
-``` -->
-
-<!-- Embed a query using the helper script.
-```sh
-python3 src/generate_query_embeddings.py
->>> Enter query: french cheese
-# Find output in ./examples/french_cheese
-``` -->
-<!-- 
-Copy and paste the query embedding into a new param in Neo4j, make sure to wrap in single-quotes.
-```cypher
-:param query => toFloatList(split('<embedding>', ","))
-``` -->
-
-<!-- Query the graph using the vector index.
-```cypher
-MATCH (p:Product)
-CALL db.index.vector.queryNodes('product-name-embeddings', 5, $query)
-YIELD node AS similarProduct, score
-MATCH (similarProduct)
-RETURN DISTINCT similarProduct.productName, score ORDER BY score DESC;
-``` -->
-
 ## Clean Up
 Stop and remove the Neo4j container.
 ```sh
-docker stop neo4j
-docker rm neo4j
+docker stop dspy-kg
+docker rm dspy-kg
 ```
 
 Deactivate the Python virtual environment.
@@ -95,5 +73,8 @@ rm -rf .venv
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## References
-- https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#indexes-vector-create
-- https://neo4j.com/docs/cypher-manual/current/syntax/parameters/
+- [DSPy docs](https://dspy-docs.vercel.app/docs/intro)
+- [Neo4j docs](https://neo4j.com/docs/)
+
+## Contact
+**Primary Contact:** [@chrisammon3000](https://github.com/chrisammon3000)

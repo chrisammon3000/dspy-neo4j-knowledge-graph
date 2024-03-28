@@ -34,20 +34,26 @@ generate_cypher = dspy.ChainOfThought(CypherFromText)
 
 if __name__ == "__main__":
     from pathlib import Path
-    import json
-    # text = "The quick brown fox jumps over the lazy dog."
-    # text = 'John Singer Sargent (/ˈsɑːrdʒənt/; January 12, 1856 – April 14, 1925)[1] was an American expatriate artist, considered the "leading portrait painter of his generation" for his evocations of Edwardian-era luxury.[2][3] He created roughly 900 oil paintings and more than 2,000 watercolors, as well as countless sketches and charcoal drawings. His oeuvre documents worldwide travel, from Venice to the Tyrol, Corfu, Spain, the Middle East, Montana, Maine, and Florida.'
-    
-    # text = input("Enter text: ")
-    examples_path = Path(__file__).parent / "examples" / "wikipedia-abstracts-v0_0_1.ndjson"
-    with open(examples_path, "r") as f:
-        # process line by line
-        for line in f:
-            data = json.loads(line)
-            text = data["text"]
-            print(text[:50])
-            cypher = generate_cypher(text=text, neo4j_schema=neo4j.fmt_schema())
+    # import json
+
+    # examples_path = Path(__file__).parent / "examples" / "wikipedia-abstracts-v0_0_1.ndjson"
+    # with open(examples_path, "r") as f:
+    #     # process line by line
+    #     for line in f:
+    #         data = json.loads(line)
+    #         text = data["text"]
+    #         print(text[:50])
+    #         cypher = generate_cypher(text=text, neo4j_schema=neo4j.fmt_schema())
+    #         neo4j.query(cypher.statement.replace('```', ''))
+
+    while True:
+        try:
+            text = input("\nEnter text: ")
+            cypher = generate_cypher(text=text.replace("\n", " "), neo4j_schema=neo4j.fmt_schema())
             neo4j.query(cypher.statement.replace('```', ''))
-    # cypher = generate_cypher(text=text, neo4j_schema=neo4j.fmt_schema())
-    # neo4j.query(cypher.statement.replace('```', ''))
-    print()
+
+        except Exception as e:
+            print(e)
+            continue
+        except KeyboardInterrupt:
+            break

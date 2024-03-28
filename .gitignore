@@ -95,3 +95,5 @@ samconfig.toml
 .terraform/
 .terraform.lock.hcl
 
+# Project Files
+NOTES.md
